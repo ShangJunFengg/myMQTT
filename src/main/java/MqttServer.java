@@ -1,9 +1,7 @@
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.mqtt.MqttDecoder;
 import io.netty.handler.codec.mqtt.MqttEncoder;
@@ -17,12 +15,12 @@ public class MqttServer {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                workerGroup.shutdownGracefully();
-                bossGroup.shutdownGracefully();
-            }
-        });
+//        Runtime.getRuntime().addShutdownHook(new Thread() {
+//            public void run() {
+//                workerGroup.shutdownGracefully();
+//                bossGroup.shutdownGracefully();
+//            }
+//        });
 
 
         ServerBootstrap b = new ServerBootstrap();
@@ -34,7 +32,6 @@ public class MqttServer {
                     public void initChannel(SocketChannel ch) throws Exception {
 
                         ChannelPipeline p = ch.pipeline();
-
                         p.addFirst("idleHandler", new IdleStateHandler(0, 0, 120));
                         p.addLast("encoder", MqttEncoder.INSTANCE);
                         p.addLast("decoder", new MqttDecoder());
